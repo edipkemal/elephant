@@ -1,14 +1,14 @@
 <?php
 
-    $url = "https://api.thingspeak.com/channels/1759852/feeds.json?api_key=E2QFXBUFNABANL6N&results=1";
+$url = "https://api.thingspeak.com/channels/1759852/feeds.json?api_key=E2QFXBUFNABANL6N&results=1";
 
-    $opts = array('http' =>
-              array(
-                  'method' => 'GET',
-                  'max_redirects' => '0',
-                  'ignore_errors' => '1'
-                    )
-                  );
+$opts = array('http' =>
+    array(
+        'method' => 'GET',
+        'max_redirects' => '0',
+        'ignore_errors' => '1'
+    )
+);
 
 $context = stream_context_create($opts);
 $stream = fopen($url, 'r', false, $context);
@@ -16,8 +16,19 @@ $stream = fopen($url, 'r', false, $context);
 $json = json_decode(stream_get_contents($stream),true);
 $feeds = $json['feeds'];
 
-$time = date('d-m-Y');
-$temperature = 32; //$feeds[0]['field1'];
+//$time = date('d-m-Y h:i:s'); // current time 
+$time = $feeds[0]['created_at']; //data time
+$time =  str_replace("T", " ", $time); //delete if useing current time
+$time =  str_replace("Z", "", $time); //delete if using current time
+$time = new  DateTime($time, new DateTimeZone('Europe/Istanbul'));
+$time->add(new DateInterval('PT' . 180 . 'M'));
+//date_default_timezone_set('Europe/Istanbul');
+//$time->setTimezone(new DateTimeZone('Europe/Istanbul'));
+$time = $time->format('d-m-Y H:i:s');
+
+$temperature = 32; // sensor is broken, if yours working, delete this and uncomment the line at below
+//$temperature = $feeds[0]['field1']; 
+
 $humidity = $feeds[0]['field2'];
 $moisture = abs((int)($feeds[0]['field3'])-1000)/10;
 $rain = $feeds[0]['field4'];
@@ -36,13 +47,9 @@ if($irrigation==1){
 }else{
   $irrigation="Stopped";
 }
-if($temperature=="nan"){
-  $temperature="60.10";
-  $humidity="36.0";
-}
 
 $url=$_SERVER['REQUEST_URI'];
-header("Refresh: 2; URL=$url"); 
+header("Refresh: 2; URL=$url");  // Refresh the webpage every 2 seconds
 ?>
 <html lang="en">
   <head>
