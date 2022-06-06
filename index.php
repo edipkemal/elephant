@@ -1,40 +1,18 @@
 <?php
-/*
-$dataFile = fopen("dataFile.txt", "r") or die("Unable to open file");
-$lastLine="";
-
-
-while($line = fgets($dataFile))
-  $lastLine=$line;
-
-
-$data = explode(",", $lastLine);
-
-$time=$data[0];
-$moisture=round(abs($data[1]-950)/10,2);
-$humidity=$data[2];
-$temperature=$data[3];
-$rain=$data[4];
-$irrigation=$data[5];*/
-
 
     $url = "https://api.thingspeak.com/channels/1759852/feeds.json?api_key=E2QFXBUFNABANL6N&results=1";
 
-$opts = array('http' =>
-    array(
-        'method' => 'GET',
-        'max_redirects' => '0',
-        'ignore_errors' => '1'
-    )
-);
+    $opts = array('http' =>
+              array(
+                  'method' => 'GET',
+                  'max_redirects' => '0',
+                  'ignore_errors' => '1'
+                    )
+                  );
 
 $context = stream_context_create($opts);
 $stream = fopen($url, 'r', false, $context);
 
-// meta veri ve başlıklar
-//var_dump(stream_get_meta_data($stream));
-
-// esas veri
 $json = json_decode(stream_get_contents($stream),true);
 $feeds = $json['feeds'];
 
@@ -63,10 +41,8 @@ if($temperature=="nan"){
   $humidity="36.0";
 }
 
-//fclose($dataFile);
-
 $url=$_SERVER['REQUEST_URI'];
-header("Refresh: 1; URL=$url");  // Refresh the webpage every 5 seconds
+header("Refresh: 2; URL=$url"); 
 ?>
 <html lang="en">
   <head>
