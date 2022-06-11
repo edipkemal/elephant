@@ -106,7 +106,7 @@ void loop() {
   esp.println(data.length() + 2);
   //Serial.println(esp.find("&gt;"));
 
-  Serial.print(",");
+  //Serial.print(",");
   Serial.print(moistureData);
   Serial.print(",");
   Serial.print(humidityData);
